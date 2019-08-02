@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class MoveForward : MonoBehaviour
+public class MoveForward : Trability
 {
     public float speed;
 
@@ -9,7 +9,9 @@ public class MoveForward : MonoBehaviour
 
     void Awake()
     {
+        base.Setup();
         rb = GetComponent<Rigidbody2D>();
+
     }
 
     private void Update()
@@ -18,5 +20,10 @@ public class MoveForward : MonoBehaviour
         {
             rb.AddForce(transform.right * speed * 100);
         }
+    }
+
+    public override void UpdateTrability()
+    {
+        speed = st.Speed;
     }
 }
