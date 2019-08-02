@@ -31,7 +31,7 @@ public struct StatsContainer
     
 }
 
-public class Stats : MonoBehaviour
+public class Host : MonoBehaviour
 {
     //// Possibly move to array representation later
     //// Non array form useful for showing values with labels in inspector
@@ -84,6 +84,12 @@ public class Stats : MonoBehaviour
     [SerializeField] StatsContainer baseStats;
     [SerializeField] StatsContainer stats;
 
+    [Header("State Stats")]
+    public int hp = 10;
+    public int energy = 10;
+
+    [HideInInspector] public UnityEvent StatsUpdated;
+
     private void Awake()
     {
         //size = baseSize;
@@ -101,7 +107,41 @@ public class Stats : MonoBehaviour
         stats = baseStats;
     }
 
-    public UnityEvent StatsUpdated;
+    float nextTick = 0;
+    private void Update()
+    {
+        if (Time.time > nextTick)
+        {
+            // Tick Energy
+            nextTick = Time.time + 1;
+            energy--;
+            if (energy <= 0)
+            {
+                Die();
+            }
+        }
+    }
+
+    void Eat(GameObject food)
+    {
+        energy += food.GetComponent<Nourishment>().nourishment_value;
+        Destroy(food.gameObject);
+    }
+
+    void Die()
+    {
+        Destroy(gameObject);
+    }
+
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.gameObject.tag == "Food")
+        {
+            Eat(col.gameObject);
+        }
+    }
+
+
 
     // Trabilities should UpdateStat() when initialized, passing direct stat changes (+ or -)
     public void UpdateStat(StatsContainer newStats)
@@ -117,6 +157,8 @@ public class Stats : MonoBehaviour
         stats.fertility += newStats.fertility;
         stats.sense += newStats.sense;
         stats.special += newStats.special;
+
+        StatsUpdated.Invoke();
     }
 
     // External accessors for Acquired Stats

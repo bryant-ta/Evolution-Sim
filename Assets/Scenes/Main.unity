@@ -132,8 +132,8 @@ GameObject:
   - component: {fileID: 88016134}
   - component: {fileID: 88016133}
   - component: {fileID: 88016132}
-  - component: {fileID: 88016136}
   - component: {fileID: 88016137}
+  - component: {fileID: 88016136}
   - component: {fileID: 88016138}
   m_Layer: 0
   m_Name: Basic Cell
@@ -253,7 +253,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2970ccc74bb831f499e5c05a16514346, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  st: {fileID: 0}
+  ho: {fileID: 0}
   speed: 5
 --- !u!114 &88016137
 MonoBehaviour:
@@ -291,6 +291,8 @@ MonoBehaviour:
     fertility: 0
     sense: 0
     special: 0
+  hp: 10
+  energy: 10
   StatsUpdated:
     m_PersistentCalls:
       m_Calls: []
@@ -404,6 +406,7 @@ GameObject:
   - component: {fileID: 1248321726}
   - component: {fileID: 1248321725}
   - component: {fileID: 1248321724}
+  - component: {fileID: 1248321728}
   m_Layer: 0
   m_Name: World
   m_TagString: Untagged
@@ -536,6 +539,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1248321728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1248321723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: baf51326e336f194b940b89e769fbdaa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxFoodCount: 50
+  foodSpawnInterval: 0.1
+  food: {fileID: 1902728386}
 --- !u!1 &1902728386
 GameObject:
   m_ObjectHideFlags: 0
@@ -551,7 +569,7 @@ GameObject:
   - component: {fileID: 1902728387}
   m_Layer: 0
   m_Name: Food
-  m_TagString: Untagged
+  m_TagString: Food
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -654,7 +672,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}

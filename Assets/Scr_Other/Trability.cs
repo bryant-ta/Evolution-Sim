@@ -2,11 +2,12 @@
 
 public abstract class Trability : MonoBehaviour
 {
-    public Stats st;
+    public Host ho;
 
     public virtual void Setup()
     {
-        st = GetComponent<Stats>();
+        ho = GetComponent<Host>();
+        ho.StatsUpdated.AddListener(UpdateTrability);
     }
 
     // Recalculate applicable values in trability

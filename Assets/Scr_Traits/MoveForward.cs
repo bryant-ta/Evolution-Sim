@@ -18,12 +18,12 @@ public class MoveForward : Trability
     {
         if (rb.velocity.magnitude < speed)
         {
-            rb.AddForce(transform.right * speed * 100);
+            rb.AddForce(transform.right * speed);
         }
     }
 
     public override void UpdateTrability()
     {
-        speed = st.Speed;
+        speed = ho.Speed;
     }
 }
