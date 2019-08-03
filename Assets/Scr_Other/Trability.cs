@@ -2,7 +2,7 @@
 
 public abstract class Trability : MonoBehaviour
 {
-    public Host ho;
+    [HideInInspector] public Host ho;
 
     public virtual void Setup()
     {

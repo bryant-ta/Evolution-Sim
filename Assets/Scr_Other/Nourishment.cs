@@ -4,10 +4,10 @@ public class Nourishment : MonoBehaviour
 {
     public int nourishment_value;
 
-    void Awake()
+    [HideInInspector] public World wd;
+
+    private void OnDestroy()
     {
-
+        wd.numFood--; 
     }
-
-
 }
