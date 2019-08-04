@@ -2,7 +2,7 @@
 using UnityEngine.Events;
 
 [System.Serializable]
-public struct StatsContainer
+public struct Stats
 {
     public int size;
     public int endurance;
@@ -15,6 +15,42 @@ public struct StatsContainer
     public int fertility;
     public int sense;
     public int special;
+
+    public Stats(int _size = Constants.DEFAULT_STAT_VAL, int _endurance = Constants.DEFAULT_STAT_VAL, int _efficiency = Constants.DEFAULT_STAT_VAL, int _speed = Constants.DEFAULT_STAT_VAL, int _agility = Constants.DEFAULT_STAT_VAL, int _finesse = Constants.DEFAULT_STAT_VAL,
+        int _reasoning = Constants.DEFAULT_STAT_VAL, int _memory = Constants.DEFAULT_STAT_VAL, int _fertility = Constants.DEFAULT_STAT_VAL, int _sense = Constants.DEFAULT_STAT_VAL, int _special = Constants.DEFAULT_STAT_VAL)
+    {
+        size = _size;
+        endurance = _endurance;
+        efficiency = _efficiency;
+        speed = _speed;
+        agility = _agility;
+        finesse = _finesse;
+        reasoning = _reasoning;
+        memory = _memory;
+        fertility = _fertility;
+        sense = _sense;
+        special = _special;
+    }
+
+    // Currently can't think of a better way to be able to iterate..
+    // Note: I still want to have name and value pair display in inspector
+    // Note: Unity currently doesn't serialize dictionary or struct
+    public int[] GetStatsIter()
+    {
+        int[] statsArr = new int[Constants.NUM_STATS];
+        statsArr[0] = size;
+        statsArr[1] = size;
+        statsArr[2] = size;
+        statsArr[3] = size;
+        statsArr[4] = size;
+        statsArr[5] = size;
+        statsArr[6] = size;
+        statsArr[7] = size;
+        statsArr[8] = size;
+        statsArr[9] = size;
+        statsArr[10] = size;
+        return statsArr;
+    }
 }
 
 public class Host : MonoBehaviour
@@ -22,8 +58,8 @@ public class Host : MonoBehaviour
     [Header("Info")]
     public int gen = 1;
 
-    [SerializeField] StatsContainer baseStats;
-    [SerializeField] StatsContainer stats;
+    [SerializeField] Stats baseStats;
+    [SerializeField] Stats stats;
 
     [Header("State Stats")]
     public int hp = 10;
@@ -33,7 +69,7 @@ public class Host : MonoBehaviour
 
     [HideInInspector] public UnityEvent StatsUpdated;
 
-    public void Init(int _gen, StatsContainer _baseStats)
+    public void Init(int _gen, Stats _baseStats)
     {
         gen = _gen;
         baseStats = _baseStats;
@@ -58,7 +94,7 @@ public class Host : MonoBehaviour
 
         if (energy > Fertlity)
         {
-            energy -= Mathf.RoundToInt(Fertlity / 4);
+            energy /= 2;
             Replicate();
         }
     }
@@ -69,6 +105,8 @@ public class Host : MonoBehaviour
         Destroy(food.gameObject);
     }
 
+    // Spawn exact copy of host
+    // Only requires 1 parent
     void Replicate()
     {
         hf.SpawnHost(transform.position, this);
@@ -88,7 +126,7 @@ public class Host : MonoBehaviour
     }
     
     // Trabilities should UpdateStat() when initialized, passing direct stat changes (+ or -)
-    public void UpdateStat(StatsContainer newStats)
+    public void UpdateStat(Stats newStats)
     {
         stats.size += newStats.size;
         stats.endurance += newStats.endurance;
@@ -106,7 +144,7 @@ public class Host : MonoBehaviour
     }
 
     // Accessors for Base Stats
-    public StatsContainer BaseStats => baseStats;
+    public Stats BaseStats => baseStats;
 
     // Accessors for Acquired Stats
     public int Size => stats.size;

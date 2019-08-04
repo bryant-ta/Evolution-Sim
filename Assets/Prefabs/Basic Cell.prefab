@@ -134,17 +134,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gen: 0
   baseStats:
-    size: 10
-    endurance: 10
-    efficiency: 10
-    speed: 10
-    agility: 10
-    finesse: 10
-    reasoning: 10
-    memory: 10
-    fertility: 10
-    sense: 10
-    special: 10
+    size: 5
+    endurance: 5
+    efficiency: 5
+    speed: 5
+    agility: 5
+    finesse: 5
+    reasoning: 5
+    memory: 5
+    fertility: 5
+    sense: 5
+    special: 5
   stats:
     size: 10
     endurance: 10
