@@ -16,7 +16,6 @@ public class HostFactory : ScriptableObject
         {
             parent1 = host.GetComponent<Host>();
             parent1.Init(0, new Stats(Constants.DEFAULT_STAT_VAL));
-            Debug.Log(parent1.Agility);
             childStats = parent1.BaseStats;
         }
         // If host has one parent (Replication)

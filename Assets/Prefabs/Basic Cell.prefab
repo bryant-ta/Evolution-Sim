@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 1953335310549524785}
   m_Layer: 0
   m_Name: Basic Cell
-  m_TagString: Untagged
+  m_TagString: Host
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -113,13 +113,13 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0.2
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!114 &1953335310549524784
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146,19 +146,19 @@ MonoBehaviour:
     sense: 5
     special: 5
   stats:
-    size: 10
-    endurance: 10
-    efficiency: 10
-    speed: 10
-    agility: 10
-    finesse: 10
-    reasoning: 10
-    memory: 10
-    fertility: 10
-    sense: 10
-    special: 10
+    size: 5
+    endurance: 5
+    efficiency: 5
+    speed: 5
+    agility: 5
+    finesse: 5
+    reasoning: 5
+    memory: 5
+    fertility: 5
+    sense: 5
+    special: 5
   hp: 10
-  energy: 5
+  energy: 15
   hf: {fileID: 11400000, guid: 9c2bae9060e390a43a48fbecc1326812, type: 2}
   StatsUpdated:
     m_PersistentCalls:

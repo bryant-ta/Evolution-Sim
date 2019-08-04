@@ -67,6 +67,7 @@ public class Host : MonoBehaviour
 
     [Label("Host Factory")] public HostFactory hf;
 
+    [HideInInspector] bool isSpawningChild = false;
     [HideInInspector] public UnityEvent StatsUpdated;
 
     public void Init(int _gen, Stats _baseStats)
@@ -76,6 +77,7 @@ public class Host : MonoBehaviour
         stats = baseStats;
 
         // TODO: calculate other stats
+        SetStateStats();
     }
 
     float nextTick = 0;
@@ -92,17 +94,26 @@ public class Host : MonoBehaviour
             }
         }
 
-        if (energy > Fertlity)
-        {
-            energy /= 2;
-            Replicate();
-        }
+        //if (energy > Fertility + Efficiency)
+        //{
+        //    energy /= 2;
+        //    Replicate();
+        //}
     }
 
     void Eat(GameObject food)
     {
         energy += food.GetComponent<Nourishment>().nourishment_value;
         Destroy(food.gameObject);
+    }
+
+    // Spawn potentially mutated copy of host
+    // Requires 2 parents
+    // Call on collision with same species
+    void Reproduce(Host parent1, Host parent2)
+    {
+        print("spawned");
+        hf.SpawnHost(transform.position, parent1, parent2);
     }
 
     // Spawn exact copy of host
@@ -123,6 +134,31 @@ public class Host : MonoBehaviour
         {
             Eat(col.gameObject);
         }
+    }
+
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        // temp defining species as same gen
+        if (energy > Fertility + Efficiency && col.gameObject.tag == "Host" && col.gameObject.GetComponent<Host>().gen == gen)
+        {
+            energy /= 2;
+            Host other = col.gameObject.GetComponent<Host>();
+            if (!other.isSpawningChild)
+            {
+                isSpawningChild = true;
+                Reproduce(this, other);
+            }
+            else    // Kinda hacky but works for now... dont like external obj responsible for this obj state
+            {
+                other.isSpawningChild = false;
+            }
+        }
+    }
+
+    void SetStateStats()
+    {
+        hp = Size * 2;
+        energy = Endurance * 2 + Size;
     }
     
     // Trabilities should UpdateStat() when initialized, passing direct stat changes (+ or -)
@@ -155,7 +191,7 @@ public class Host : MonoBehaviour
     public int Finesse { get { return stats.finesse; } }
     public int Reasoning { get { return stats.reasoning; } }
     public int Memory { get { return stats.memory; } }
-    public int Fertlity { get { return stats.fertility; } }
+    public int Fertility { get { return stats.fertility; } }
     public int Sense { get { return stats.sense; } }
     public int Special { get { return stats.special; } }
 }
