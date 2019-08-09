@@ -9,18 +9,19 @@ public class HostFactory : ScriptableObject
     // Host creation function -  maybe move to factory later
     public void SpawnHost(Vector2 pos, Host parent1 = null, Host parent2 = null)
     {
+        int gen = 0;
         Stats childStats;
 
         // If host has no parents (A new species)
         if (parent1 == null)
         {
-            parent1 = host.GetComponent<Host>();
-            parent1.Init(0, new Stats(Constants.DEFAULT_STAT_VAL));
-            childStats = parent1.BaseStats;
+            gen = 1;
+            childStats = new Stats(Constants.DEFAULT_STAT_VAL);
         }
         // If host has one parent (Replication)
         else if (parent2 == null)
         {
+            gen = parent1.gen;
             childStats = parent1.BaseStats;
         }
         // If host has two parents (Normal Reproduction)
@@ -41,12 +42,13 @@ public class HostFactory : ScriptableObject
                     childStatsArr[i] = parent2StatsArr[i] + Random.Range(-Constants.ADAPTABILITY_VAL, Constants.ADAPTABILITY_VAL + 1);
                 }
             }
+            gen = parent1.gen;
             childStats = new Stats(childStatsArr[0], childStatsArr[1], childStatsArr[2], childStatsArr[3], childStatsArr[4],
                 childStatsArr[5], childStatsArr[6], childStatsArr[7], childStatsArr[8], childStatsArr[9], childStatsArr[10]);
         }
 
         // Create child host
         GameObject obj = Instantiate(host, pos, Quaternion.Euler(0, 0, Random.Range(0, 359)));
-        obj.GetComponent<Host>().Init(parent1.gen + 1, childStats);
+        obj.GetComponent<Host>().Init(gen, childStats);
     }
 }

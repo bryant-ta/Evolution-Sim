@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class World : MonoBehaviour
 {
@@ -46,7 +47,7 @@ public class World : MonoBehaviour
     {
         for (int i = 0; i < numToSpawn; i++)
         {
-            GameObject obj = Instantiate(food, Random.insideUnitCircle * gameObject.transform.localScale.x * 0.5f, Quaternion.identity);
+            GameObject obj = Instantiate(food, Random.insideUnitCircle * gameObject.transform.localScale.x * 0.5f, Quaternion.identity, gameObject.transform);
             obj.GetComponent<Nourishment>().wd = this;
         }
         numFood += numToSpawn;

@@ -11,14 +11,16 @@ public class MoveForward : Trability
     {
         base.Setup();
         rb = GetComponent<Rigidbody2D>();
+        rb.velocity = transform.right;
+    }
 
-        rb.AddForce(transform.right * speed * 100);
+    private void Update()
+    {
+        rb.velocity = speed * (rb.velocity.normalized);
     }
 
     public override void UpdateTrability()
     {
         speed = ho.Speed;
-        rb.velocity = Vector2.zero;
-        rb.AddForce(transform.right * speed);
     }
 }

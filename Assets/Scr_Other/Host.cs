@@ -52,6 +52,21 @@ public struct Stats
         return statsArr;
     }
 }
+public enum Stat
+{
+    Size = 1,
+    Endurance = 2,
+    Efficiency = 3,
+    Speed = 4,
+    Agility = 5,
+    Finesse = 6,
+    Reasoning = 7,
+    Memory = 8,
+    Fertility = 9,
+    Sense = 10,
+    Special = 11
+}
+
 
 public class Host : MonoBehaviour
 {
@@ -66,18 +81,31 @@ public class Host : MonoBehaviour
     public int energy = 10;
 
     [Label("Host Factory")] public HostFactory hf;
-
-    [HideInInspector] bool isSpawningChild = false;
+    
     [HideInInspector] public UnityEvent StatsUpdated;
+
+    bool isSpawningChild = false;
+    UIAnalysis uia;
 
     public void Init(int _gen, Stats _baseStats)
     {
         gen = _gen;
         baseStats = _baseStats;
-        stats = baseStats;
+        UpdateStat(baseStats);
 
         // TODO: calculate other stats
         SetStateStats();
+
+        // Breaking host modify self-contained rule bc Scriptable Object+Prefab nonsense in unity
+        uia = GameObject.Find("LevelManager").GetComponent<UIAnalysis>();
+        if (!uia)
+        {
+            print("Did not find 'LevelManager' in scene");
+            return;
+        }
+        uia.RegisterHost(this, gen);
+
+        
     }
 
     float nextTick = 0;
@@ -93,12 +121,6 @@ public class Host : MonoBehaviour
                 Die();
             }
         }
-
-        //if (energy > Fertility + Efficiency)
-        //{
-        //    energy /= 2;
-        //    Replicate();
-        //}
     }
 
     void Eat(GameObject food)
@@ -112,7 +134,6 @@ public class Host : MonoBehaviour
     // Call on collision with same species
     void Reproduce(Host parent1, Host parent2)
     {
-        print("spawned");
         hf.SpawnHost(transform.position, parent1, parent2);
     }
 
@@ -134,12 +155,8 @@ public class Host : MonoBehaviour
         {
             Eat(col.gameObject);
         }
-    }
-
-    private void OnCollisionEnter2D(Collision2D col)
-    {
         // temp defining species as same gen
-        if (energy > Fertility + Efficiency && col.gameObject.tag == "Host" && col.gameObject.GetComponent<Host>().gen == gen)
+        else if (col.gameObject.tag == "Host" && energy > 2*(Fertility + Efficiency) && col.gameObject.GetComponent<Host>().gen == gen)
         {
             energy /= 2;
             Host other = col.gameObject.GetComponent<Host>();

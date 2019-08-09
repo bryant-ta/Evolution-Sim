@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1953335310549524798}
   - component: {fileID: 1953335310549524799}
   - component: {fileID: 1953335310549524796}
+  - component: {fileID: 6513800386415677849}
   - component: {fileID: 1953335310549524797}
   - component: {fileID: 1953335310549524784}
   - component: {fileID: 1953335310549524785}
@@ -98,7 +99,23 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.75
+  m_Radius: 0.7
+--- !u!58 &6513800386415677849
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1953335310549524794}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 1
 --- !u!50 &1953335310549524797
 Rigidbody2D:
   serializedVersion: 4
@@ -112,7 +129,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 1
   m_AngularDrag: 0.2
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -157,8 +174,8 @@ MonoBehaviour:
     fertility: 5
     sense: 5
     special: 5
-  hp: 10
-  energy: 15
+  hp: 60
+  energy: 90
   hf: {fileID: 11400000, guid: 9c2bae9060e390a43a48fbecc1326812, type: 2}
   StatsUpdated:
     m_PersistentCalls:
