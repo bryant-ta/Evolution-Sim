@@ -91,7 +91,7 @@ public class Host : MonoBehaviour
     {
         gen = _gen;
         baseStats = _baseStats;
-        UpdateStat(baseStats);
+        AddStats(baseStats);
 
         // TODO: calculate other stats
         SetStateStats();
@@ -179,7 +179,7 @@ public class Host : MonoBehaviour
     }
     
     // Trabilities should UpdateStat() when initialized, passing direct stat changes (+ or -)
-    public void UpdateStat(Stats newStats)
+    public void AddStats(Stats newStats)
     {
         stats.size += newStats.size;
         stats.endurance += newStats.endurance;

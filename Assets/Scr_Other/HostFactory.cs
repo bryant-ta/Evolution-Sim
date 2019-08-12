@@ -42,7 +42,7 @@ public class HostFactory : ScriptableObject
                     childStatsArr[i] = parent2StatsArr[i] + Random.Range(-Constants.ADAPTABILITY_VAL, Constants.ADAPTABILITY_VAL + 1);
                 }
             }
-            gen = parent1.gen;
+            gen = parent1.gen + 1;
             childStats = new Stats(childStatsArr[0], childStatsArr[1], childStatsArr[2], childStatsArr[3], childStatsArr[4],
                 childStatsArr[5], childStatsArr[6], childStatsArr[7], childStatsArr[8], childStatsArr[9], childStatsArr[10]);
         }

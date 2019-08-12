@@ -163,17 +163,17 @@ MonoBehaviour:
     sense: 5
     special: 5
   stats:
-    size: 5
-    endurance: 5
-    efficiency: 5
-    speed: 5
-    agility: 5
-    finesse: 5
-    reasoning: 5
-    memory: 5
-    fertility: 5
-    sense: 5
-    special: 5
+    size: 0
+    endurance: 0
+    efficiency: 0
+    speed: 0
+    agility: 0
+    finesse: 0
+    reasoning: 0
+    memory: 0
+    fertility: 0
+    sense: 0
+    special: 0
   hp: 60
   energy: 90
   hf: {fileID: 11400000, guid: 9c2bae9060e390a43a48fbecc1326812, type: 2}
@@ -195,4 +195,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ho: {fileID: 0}
-  speed: 5
+  speed: 1

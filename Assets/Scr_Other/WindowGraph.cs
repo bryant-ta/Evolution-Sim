@@ -5,6 +5,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using CodeMonkey.Utils;
 
+/// Modified Graph Object, credit to https://unitycodemonkey.com
+/// 
+/// Features:
+///     - Overlay graph data on a fixed X and Y axes, with Unity Toggles
+///     - Customize axes label formatting
+///     
 public class WindowGraph : MonoBehaviour {
 
     [SerializeField] Sprite circleSprite;
@@ -13,29 +19,49 @@ public class WindowGraph : MonoBehaviour {
     [SerializeField] RectTransform labelTemplateY;
     [SerializeField] RectTransform dashTemplateX;
     [SerializeField] RectTransform dashTemplateY;
+    
+    public float yMaximum = 100f;
+    public float xSize = 50f;
+    public int separatorCount = 10;
 
-    List<GameObject> instObjs;
+    List<GameObject>[] dataObjs = new List<GameObject>[Constants.NUM_STATS];
+    List<GameObject> graphObjs = new List<GameObject>();
+    
+    float graphHeight;
 
     private void Awake()
     {
-        instObjs = new List<GameObject>();
-    }
-
-    public void CreateGraph(List<int> valueList)
-    {
-        ShowGraph(valueList, (int _i) => "" + (_i + 1), (float _f) => "" + Mathf.RoundToInt(_f));
-    }
-
-    public void ClearGraph()
-    {
-        foreach (GameObject obj in instObjs)
+        print(1);
+        graphHeight = graphContainer.sizeDelta.y;
+        for (int i = 0; i < dataObjs.Length; i++)
         {
-            Destroy(obj);
+            dataObjs[i] = new List<GameObject>();
         }
-        instObjs.Clear();
     }
 
-    private void ShowGraph(List<int> valueList, Func<int, string> getAxisLabelX = null, Func<float, string> getAxisLabelY = null) {
+    // Creates data points and connections
+    public void ShowData(int id, List<int> valueList)
+    {
+        GameObject lastCirObj = null;        // Current data group to do actions on
+        for (int i = 0; i < valueList.Count; i++)
+        {
+            float xPosition = xSize + i * xSize;
+            float yPosition = (valueList[i] / yMaximum) * graphHeight;
+            GameObject circleObj = CreateCircle(new Vector2(xPosition, yPosition));
+            dataObjs[id].Add(circleObj);
+            GameObject lineObj;
+            if (lastCirObj != null)
+            {
+                lineObj = CreateDotConnection(lastCirObj.GetComponent<RectTransform>().anchoredPosition, circleObj.GetComponent<RectTransform>().anchoredPosition);
+                dataObjs[id].Add(lineObj);
+            }
+            lastCirObj = circleObj;
+        }
+    }
+
+    // Creates graph axes, axes labels, increment lines
+    // Option to specify axes label format
+    public void ShowGraph(int numXElements, Func<int, string> getAxisLabelX = null, Func<float, string> getAxisLabelY = null) {
         if (getAxisLabelX == null) {
             getAxisLabelX = delegate (int _i) { return _i.ToString(); };
         }
@@ -43,41 +69,26 @@ public class WindowGraph : MonoBehaviour {
             getAxisLabelY = delegate (float _f) { return Mathf.RoundToInt(_f).ToString(); };
         }
 
-        float graphHeight = graphContainer.sizeDelta.y;
-        float yMaximum = 100f;
-        float xSize = 50f;
-
-        GameObject lastCirObj = null;
-        for (int i = 0; i < valueList.Count; i++) {
+        for (int i = 0; i < numXElements; i++) {
             float xPosition = xSize + i * xSize;
-            float yPosition = (valueList[i] / yMaximum) * graphHeight;
-            GameObject circleObj = CreateCircle(new Vector2(xPosition, yPosition));
-            instObjs.Add(circleObj);
-            GameObject lineObj;
-            if (lastCirObj != null) {
-                lineObj = CreateDotConnection(lastCirObj.GetComponent<RectTransform>().anchoredPosition, circleObj.GetComponent<RectTransform>().anchoredPosition);
-                instObjs.Add(lineObj);
-            }
-            lastCirObj = circleObj;
             
             RectTransform labelX = Instantiate(labelTemplateX);
-            instObjs.Add(labelX.gameObject);
+            graphObjs.Add(labelX.gameObject);
             labelX.SetParent(graphContainer, false);
             labelX.gameObject.SetActive(true);
             labelX.anchoredPosition = new Vector2(xPosition, -20f);
             labelX.GetComponent<Text>().text = getAxisLabelX(i);
             
             RectTransform dashX = Instantiate(dashTemplateX);
-            instObjs.Add(dashX.gameObject);
+            graphObjs.Add(dashX.gameObject);
             dashX.SetParent(graphContainer, false);
             dashX.gameObject.SetActive(true);
             dashX.anchoredPosition = new Vector2(xPosition, 0f);
         }
-
-        int separatorCount = 10;
+        
         for (int i = 0; i <= separatorCount; i++) {
             RectTransform labelY = Instantiate(labelTemplateY);
-            instObjs.Add(labelY.gameObject);
+            graphObjs.Add(labelY.gameObject);
             labelY.SetParent(graphContainer, false);
             labelY.gameObject.SetActive(true);
             float normalizedValue = i * 1f / separatorCount;
@@ -85,11 +96,40 @@ public class WindowGraph : MonoBehaviour {
             labelY.GetComponent<Text>().text = getAxisLabelY(normalizedValue * yMaximum);
             
             RectTransform dashY = Instantiate(dashTemplateY);
-            instObjs.Add(dashY.gameObject);
+            graphObjs.Add(dashY.gameObject);
             dashY.SetParent(graphContainer, false);
             dashY.gameObject.SetActive(true);
             dashY.anchoredPosition = new Vector2(0f, normalizedValue * graphHeight);
         }
+    }
+
+    public void ClearData(int id)
+    {
+        foreach (GameObject obj in dataObjs[id])
+        {
+            Destroy(obj);
+        }
+        dataObjs[id].Clear();
+    }
+
+    public void ClearGraph(bool dataOnly = false)   // Don't use dataOnly option in this project (Evolution_Sim)
+    {
+        if (!dataOnly)
+        {
+            foreach (GameObject obj in graphObjs)
+            {
+                Destroy(obj);
+            }
+        }
+        foreach (List<GameObject> dataPoints in dataObjs)
+        {
+            foreach (GameObject obj in dataPoints)
+            {
+                Destroy(obj);
+            }
+            dataPoints.Clear();
+        }
+        graphObjs.Clear();
     }
 
     private GameObject CreateCircle(Vector2 anchoredPosition)
