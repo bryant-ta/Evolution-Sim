@@ -104,8 +104,6 @@ public class Host : MonoBehaviour
             return;
         }
         uia.RegisterHost(this, gen);
-
-        
     }
 
     float nextTick = 0;

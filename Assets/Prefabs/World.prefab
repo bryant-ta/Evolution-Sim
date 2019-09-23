@@ -164,4 +164,5 @@ MonoBehaviour:
   foodSpawnInterval: 0.1
   food: {fileID: 3028924185268664262, guid: f9002a6c650e0744ba04ebcbac4c0d71, type: 3}
   hf: {fileID: 11400000, guid: 9c2bae9060e390a43a48fbecc1326812, type: 2}
+  hostContainer: {fileID: 0}
   numFood: 0

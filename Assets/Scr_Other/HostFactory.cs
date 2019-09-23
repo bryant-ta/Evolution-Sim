@@ -7,7 +7,7 @@ public class HostFactory : ScriptableObject
     public World wd;
 
     // Host creation function -  maybe move to factory later
-    public void SpawnHost(Vector2 pos, Host parent1 = null, Host parent2 = null)
+    public GameObject SpawnHost(Vector2 pos, Host parent1 = null, Host parent2 = null, Transform parent = null)
     {
         int gen = 0;
         Stats childStats;
@@ -50,5 +50,10 @@ public class HostFactory : ScriptableObject
         // Create child host
         GameObject obj = Instantiate(host, pos, Quaternion.Euler(0, 0, Random.Range(0, 359)));
         obj.GetComponent<Host>().Init(gen, childStats);
+        return obj;
+
+        // Can't interact with any scene objects, and can't set transform parent to prefab object, so...
+        // I just set parent outside HostFactory - this restriction sucks or I suck bc I can't find other way
+        // Edit: I am going to just get all hosts by tag when needed
     }
 }

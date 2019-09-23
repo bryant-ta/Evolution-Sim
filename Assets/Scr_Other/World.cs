@@ -16,11 +16,13 @@ public class World : MonoBehaviour
     public GameObject food;
 
     [Label("Host Factory")] public HostFactory hf;
-
+    
     public int numFood = 0;
 
     private void Awake()
     {
+        //hostContainer = transform.Find("HostContainer");
+
         SpawnFood(initNumFood);
         Populate(initNumHost);
     }

@@ -23,39 +23,64 @@ public class WindowGraph : MonoBehaviour {
     public float yMaximum = 100f;
     public float xSize = 50f;
     public int separatorCount = 10;
+    public string titleX;
 
-    List<GameObject>[] dataObjs = new List<GameObject>[Constants.NUM_STATS];
-    List<GameObject> graphObjs = new List<GameObject>();
-    
+    public GameObject dataTogglesCont;     // Holds buttons for toggling data
+
+    List<GameObject>[] dataObjs = new List<GameObject>[Constants.NUM_STATS];    // Each list holds a stat's plot (circles, lines)
+    List<GameObject> graphObjs = new List<GameObject>();        // Holds axes, titles, label lines, etc.
+    List<Color> dataColors = new List<Color>();                 // Holds stat plot colors
+
+    float graphWidth;
     float graphHeight;
 
     private void Awake()
     {
-        print(1);
+        graphWidth = graphContainer.sizeDelta.x;
         graphHeight = graphContainer.sizeDelta.y;
         for (int i = 0; i < dataObjs.Length; i++)
         {
             dataObjs[i] = new List<GameObject>();
         }
+
+        // Match plot color to toggle "graphic" color, chosen in inspector
+        foreach (Toggle t in dataTogglesCont.transform.GetComponentsInChildren<Toggle>())
+        {
+            dataColors.Add(t.graphic.color);
+        }
     }
 
     // Creates data points and connections
-    public void ShowData(int id, List<int> valueList)
+    // id: index of data in INTERNAl arrays, groupVertical: valueList data represents data points of one X (i.e. Point Dist graph)
+    public void ShowData(int id, List<int> valueList, bool groupVertical = false)
     {
-        GameObject lastCirObj = null;        // Current data group to do actions on
-        for (int i = 0; i < valueList.Count; i++)
+        if (groupVertical)
         {
-            float xPosition = xSize + i * xSize;
-            float yPosition = (valueList[i] / yMaximum) * graphHeight;
-            GameObject circleObj = CreateCircle(new Vector2(xPosition, yPosition));
-            dataObjs[id].Add(circleObj);
-            GameObject lineObj;
-            if (lastCirObj != null)
+            float xPosition = xSize * (id + 1);
+            for (int i = 0; i < valueList.Count; i++)
             {
-                lineObj = CreateDotConnection(lastCirObj.GetComponent<RectTransform>().anchoredPosition, circleObj.GetComponent<RectTransform>().anchoredPosition);
-                dataObjs[id].Add(lineObj);
+                float yPosition = (valueList[i] / yMaximum) * graphHeight;
+                GameObject circleObj = CreateCircle(id, new Vector2(xPosition, yPosition));
+                dataObjs[id].Add(circleObj);
             }
-            lastCirObj = circleObj;
+        }
+        else
+        {
+            GameObject lastCirObj = null;        // Current data group to do actions on
+            for (int i = 0; i < valueList.Count; i++)
+            {
+                float xPosition = xSize + i * xSize;
+                float yPosition = (valueList[i] / yMaximum) * graphHeight;
+                GameObject circleObj = CreateCircle(id, new Vector2(xPosition, yPosition));
+                dataObjs[id].Add(circleObj);
+                GameObject lineObj;
+                if (lastCirObj != null)
+                {
+                    lineObj = CreateDotConnection(id, lastCirObj.GetComponent<RectTransform>().anchoredPosition, circleObj.GetComponent<RectTransform>().anchoredPosition);
+                    dataObjs[id].Add(lineObj);
+                }
+                lastCirObj = circleObj;
+            }
         }
     }
 
@@ -68,6 +93,18 @@ public class WindowGraph : MonoBehaviour {
         if (getAxisLabelY == null) {
             getAxisLabelY = delegate (float _f) { return Mathf.RoundToInt(_f).ToString(); };
         }
+        
+        GameObject axesTitleX = new GameObject("AxesTitleX", typeof(Text));
+        graphObjs.Add(axesTitleX.gameObject);
+        axesTitleX.transform.SetParent(graphContainer, false);
+        axesTitleX.gameObject.SetActive(true);
+        axesTitleX.GetComponent<Text>().text = titleX;
+        axesTitleX.GetComponent<Text>().font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        RectTransform rectTransform = axesTitleX.GetComponent<RectTransform>();
+        rectTransform.anchoredPosition = new Vector2(graphWidth / 2, -30f);
+        rectTransform.sizeDelta = new Vector2(110, 20);
+        rectTransform.anchorMin = new Vector2(0, 0);
+        rectTransform.anchorMax = new Vector2(0, 0);
 
         for (int i = 0; i < numXElements; i++) {
             float xPosition = xSize + i * xSize;
@@ -132,11 +169,12 @@ public class WindowGraph : MonoBehaviour {
         graphObjs.Clear();
     }
 
-    private GameObject CreateCircle(Vector2 anchoredPosition)
+    private GameObject CreateCircle(int id, Vector2 anchoredPosition)
     {
         GameObject gameObject = new GameObject("circle", typeof(Image));
         gameObject.transform.SetParent(graphContainer, false);
         gameObject.GetComponent<Image>().sprite = circleSprite;
+        gameObject.GetComponent<Image>().color = dataColors[id];
         RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
         rectTransform.anchoredPosition = anchoredPosition;
         rectTransform.sizeDelta = new Vector2(11, 11);
@@ -145,10 +183,10 @@ public class WindowGraph : MonoBehaviour {
         return gameObject;
     }
 
-    private GameObject CreateDotConnection(Vector2 dotPositionA, Vector2 dotPositionB) {
+    private GameObject CreateDotConnection(int id, Vector2 dotPositionA, Vector2 dotPositionB) {
         GameObject gameObject = new GameObject("dotConnection", typeof(Image));
         gameObject.transform.SetParent(graphContainer, false);
-        gameObject.GetComponent<Image>().color = new Color(1,1,1, .5f);
+        gameObject.GetComponent<Image>().color = dataColors[id] * 0.75f;
         RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
         Vector2 dir = (dotPositionB - dotPositionA).normalized;
         float distance = Vector2.Distance(dotPositionA, dotPositionB);

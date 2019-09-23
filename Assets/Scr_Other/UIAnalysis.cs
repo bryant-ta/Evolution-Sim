@@ -6,9 +6,32 @@ public class UIAnalysis : MonoBehaviour
 {
     public WindowGraph wg;
     public Button buttonHideGraph;
+    public Button buttonAliveDistGraph;
     public List<Toggle> toggleStatGraph;
     
     List<List<Host>> hostList = new List<List<Host>>();
+
+    // Should only be accessible if all other stat graph toggles are off
+    public void ToggleAliveDistGraph()
+    {
+        GameObject[] aliveHosts = GameObject.FindGameObjectsWithTag("Host");
+        List<int> statValues = new List<int>();
+        if (wg.gameObject.activeSelf == false)
+        {
+            wg.gameObject.SetActive(true);
+            wg.ShowGraph(Constants.NUM_STATS);
+        }
+        for (int i = 0; i < Constants.NUM_STATS; i++)
+        {
+            foreach (GameObject host in aliveHosts)
+            {
+                statValues.Add(StatNumToValue(i + 1, host.GetComponent<Host>()));
+            }
+            wg.ShowData(i, statValues, true);
+            statValues.Clear();
+        }
+        buttonHideGraph.gameObject.SetActive(true);
+    }
 
     public void ToggleStatGraph(int stat)
     {
@@ -30,45 +53,7 @@ public class UIAnalysis : MonoBehaviour
             int total = 0;
             foreach (Host host in hostsInGen)
             {
-                switch (stat)
-                {
-                    case 1:
-                        total += host.Size;
-                        break;
-                    case 2:
-                        total += host.Endurance;
-                        break;
-                    case 3:
-                        total += host.Efficiency;
-                        break;
-                    case 4:
-                        total += host.Speed;
-                        break;
-                    case 5:
-                        total += host.Agility;
-                        break;
-                    case 6:
-                        total += host.Finesse;
-                        break;
-                    case 7:
-                        total += host.Reasoning;
-                        break;
-                    case 8:
-                        total += host.Memory;
-                        break;
-                    case 9:
-                        total += host.Fertility;
-                        break;
-                    case 10:
-                        total += host.Sense;
-                        break;
-                    case 11:
-                        total += host.Special;
-                        break;
-                    default:
-                        Debug.Log("Invalid Stat enum");
-                        break;
-                }
+                total += StatNumToValue(stat, host);
             }
             statAvgList.Add(Mathf.RoundToInt((float)total / hostsInGen.Count));
         }
@@ -78,6 +63,7 @@ public class UIAnalysis : MonoBehaviour
             wg.gameObject.SetActive(true);
             wg.ShowGraph(statAvgList.Count);
         }
+        buttonAliveDistGraph.gameObject.SetActive(false);
         buttonHideGraph.gameObject.SetActive(true);
         wg.ShowData(stat-1, statAvgList);
     }
@@ -85,6 +71,7 @@ public class UIAnalysis : MonoBehaviour
     public void HideGraph()
     {
         buttonHideGraph.gameObject.SetActive(false);
+        buttonAliveDistGraph.gameObject.SetActive(true);
         foreach (Toggle t in toggleStatGraph)
         {
             t.isOn = false;
@@ -103,6 +90,39 @@ public class UIAnalysis : MonoBehaviour
         else
         {
             hostList[gen - 1].Add(host);
+        }
+    }
+
+    // Return indicated host stat when given stat int
+    int StatNumToValue(int statID, Host host)
+    {
+        switch (statID)
+        {
+            case 1:
+                return host.Size;
+            case 2:
+                return host.Endurance;
+            case 3:
+                return host.Efficiency;
+            case 4:
+                return host.Speed;
+            case 5:
+                return host.Agility;
+            case 6:
+                return host.Finesse;
+            case 7:
+                return host.Reasoning;
+            case 8:
+                return host.Memory;
+            case 9:
+                return host.Fertility;
+            case 10:
+                return host.Sense;
+            case 11:
+                return host.Special;
+            default:
+                Debug.Log("Invalid Stat enum");
+                return -1;
         }
     }
 
